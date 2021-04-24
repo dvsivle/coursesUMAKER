@@ -36,13 +36,13 @@ import struct
 
 # Plot
 
-globalDataStream = [[0],[0]]
-globalDataFilter = [[0],[0]]
+globalStream = []
 
 rows = 2
 cols = 1
 
-
+max_axis_X = 100
+max_axis_Y = 100
 
 # Create an interface to PortAudio
 audioRecord = pyaudio.PyAudio()
@@ -50,7 +50,9 @@ audioRecord = pyaudio.PyAudio()
 # Values to recording
 
 # Record in chunks of 1024 times six samples
-FRAMES = 1024*6
+#FRAMES = 1024*6
+FRAMES = 1
+
 # Format bites per sample
 FORMAT = pyaudio.paInt16
 # Chanell to get
@@ -60,7 +62,7 @@ SAMPLES = 44100
 """
 Recording
 """
-def recording(outData1,outData2):    
+def recording(outDatas):    
     # Get the stream
     stream = audioRecord.open(
         format = FORMAT,
@@ -70,51 +72,17 @@ def recording(outData1,outData2):
         output = True,
         frames_per_buffer = FRAMES
         )
-    # Get bytes
-    data = stream.read(FRAMES) 
-    # Get time signal data
-    outData = struct.unpack( str(FRAMES)+ "h",data)
-
-    outData1[0] = range(0,len(outData))
-    outData1[1] = outData
-
-    outData2[0] = range(0,len(outData))
-    outData2[1] = outData
-
-"""
-Plot data
-"""
-def plotData(num,ax1,ax2,data1,data2):
-    ax1.plot( data1[0], data1[1],color='blue')
-    ax2.plot( data2[0], data2[1],color='green')    
-    return ax1,ax2
-"""
-This function implements the estimation of 
-the heart rate by means of digital filters.
-"""
-def main():    
-    # Cancel execute with a key input with ctrl + c
     try:
-        while True:            
-            fig, (ax1,ax2) = plt.subplots(2)
-            fig.suptitle('Filtros FIR')
-
-            ax1.set_title('Real stream')
-            ax1.plot( globalDataStream[0], globalDataStream[1] )
-            
-            ax2.set_title('Filter FIR')
-            ax2.plot( globalDataStream[0], globalDataFilter[1] )
-
-            # Configuramos la función que "animará" nuestra gráfica
-            line_ani = animation.FuncAnimation(fig, plotData, fargs=(ax1, ax2, globalDataStream, globalDataFilter),
-                interval=50, blit=False)
-            
-            # Configuramos y lanzamos el hilo encargado de leer datos del serial
-            dataCollector = threading.Thread( target = recording, args=(globalDataStream,globalDataFilter,) )
-            dataCollector.start()
-            plt.show()
-            dataCollector.join()
-
+        while (True):
+            # Get bytes
+            data = stream.read(FRAMES) 
+            # Get time signal data
+            outData = struct.unpack( str(FRAMES)+ "h",data)
+            outDatas.append(outData[0])
+            #i = input()
+            if len( outDatas ) > 100:
+                outDatas.pop(0)
+    
     except KeyboardInterrupt:
         # Stop and close the stream 
         stream.stop_stream()
@@ -123,6 +91,52 @@ def main():
         audioRecord.terminate()
         print("Exit .... ok!");
         sys.exit()
+
+"""
+Plot data
+"""
+def plotData(num,ax1,hl1,data):
+    valuesX = list( range(0,len(data)) )
+    maxAxisX = max_axis_X + 200
+    maxAxisY = max(data) + 200
+    
+    ax1.set_ylim( -1*maxAxisY,maxAxisY)
+    hl1.set_data(valuesX , data)
+    return hl1
+
+"""
+This function implements the estimation of 
+the heart rate by means of digital filters.
+"""
+def main():    
+    fig, (ax1,ax2) = plt.subplots(2)
+    fig.suptitle('Filtros FIR')
+    
+    ax1.set_title('Real Stream')    
+    ax1.set_ylim(-1*max_axis_Y,max_axis_Y)   
+    ax1.set_xlim(1,max_axis_X)
+    hl1, = ax1.plot( globalStream, globalStream )
+
+    ax2.set_title('Filter')    
+    ax2.set_ylim(-1*max_axis_Y,max_axis_Y)   
+    ax2.set_xlim(1,max_axis_X)
+    hl2, = ax1.plot( globalStream, globalStream )
+
+
+    # Animate matplot
+    line_ani = animation.FuncAnimation(fig,
+                                       plotData,
+                                       fargs=(ax1,hl1, globalStream),
+                                       frames=1,
+                                       interval=100,
+                                       blit=False
+                                       )
+    
+    # Threading
+    dataCollector = threading.Thread( target = recording, args=(globalStream,) )
+    dataCollector.start()
+    plt.show()
+    dataCollector.join()
 
 """
 Function to execute main
