@@ -26,15 +26,11 @@ import matplotlib.animation as animation
 
 # Library used for scientific computing
 import scipy.fftpack as fourier
-from scipy.fftpack import fftfreq
 from scipy.fftpack import fftshift
 
+from scipy.signal import butter, lfilter, freqz
 
-from scipy import fft, arange
-from scipy import signal
-import scipy
-from scipy.signal import butter, lfilter
-from scipy.signal import freqz
+from scipy import arange
 
 # Mathematical operations
 import numpy as np
