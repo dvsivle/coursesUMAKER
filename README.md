@@ -45,4 +45,4 @@ play the **canario-sonido.mp3**
 
 # Actions to be taken
 
-Pendiente sacar el filtro de butherword a la señal (probar crear el filtro a 900Hz)
+~~Pendiente sacar el filtro de butherword a la señal (probar crear el filtro a 900Hz)~~
