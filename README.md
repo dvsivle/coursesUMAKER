@@ -24,6 +24,23 @@ sudo apt-get install ffmpeg libav-tools
 pip install scipy
 
 ``` 
+# Examples:
+- **Butterworth low-pass**
+- **Butterworth high-pass**
+
+<center>
+<img src="images/example_.png" alt="Example" style="width:400px;height:250px;">
+</center>
+
+## Run with:
+
+```
+python3 FiltrosFIR.py
+
+``` 
+### Note
+
+play the **canario-sonido.mp3**
 
 
 # Actions to be taken
