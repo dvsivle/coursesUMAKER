@@ -9,7 +9,8 @@
         - numpy
         - struct
 """
-import random
+import serial
+import time
 
 # sys
 import sys
@@ -29,7 +30,6 @@ import scipy.fftpack as fourier
 from scipy.fftpack import fftshift
 
 from scipy.signal import butter, lfilter, freqz
-
 from scipy import arange
 
 # Mathematical operations
@@ -76,8 +76,6 @@ stream = audioRecord.open(
     frames_per_buffer = FRAMES
     )
 
-
-
 def recording(outDatas):
     """
     Recording
@@ -103,6 +101,28 @@ def recording(outDatas):
         print("Exit .... ok!");
         sys.exit()
 
+def readSerial(outDatas):
+    """
+    Read Serial
+    """
+    try:
+        arduino = serial.Serial('/dev/ttyUSB0', baudrate=9600, timeout=1.0)
+        # Get the stream
+        while (True):
+            # Serial read section
+            msg = arduino.read()
+            data = msg.decode()
+            values = []
+
+            if( len(data) != 0 ):
+                outDatas.append( int(data) )
+                        
+            if( len( outDatas ) > 50 ):
+                outDatas.pop(0)
+
+    except KeyboardInterrupt:
+        print("Exit .... ok!");
+        sys.exit()
 
 def butter_lowpass(cutoff, fs, order=5):
     """
@@ -168,7 +188,8 @@ def plotFrecuecyDomain(chart,line,data):
     '''
     Plot data in the subplot and set data in the line
     '''
-    NFFT=1024 #NFFT-point DFT      
+    NFFT = 1024 #NFFT-point DFT      
+    
     X = fftshift( fourier.fft(data,NFFT) ) #compute DFT using FFT  
     
     #fVals = np.arange(start = -NFFT/2,stop = NFFT/2)/NFFT #DFT Sample points        
@@ -214,14 +235,18 @@ def plotData(num,charst,lines,data):
     """
     Plot data
     """
+    if( len( data) >= 50 ):
+        #print("Data:",data )
+        # plot time domain
+        plotAmplitudeDomain(charst[0],lines[0],data)
 
     # Sample rate and desired cutoff frequencies (in Hz).    
+    '''
     fs = Fs
-    lowcut = 1000.0
+    lowcut = 500.0
     highcut = 1250.0
 
     data_ = data.copy()
-    
     #Butterworth low-pass
     lowPass = butter_lowpass_filter(data_, lowcut,fs, order=6)
 
@@ -239,7 +264,7 @@ def plotData(num,charst,lines,data):
     plotFrecuecyDomain(charst[1],lines[3],data)
     plotFrecuecyDomain(charst[1],lines[4],lowPass)
     plotFrecuecyDomain(charst[1],lines[5],highPass)
-
+    '''
     return charst,lines
 
 
@@ -293,7 +318,7 @@ def main():
                                        )
     
     # Threading
-    dataCollector = threading.Thread( target = recording, args=(globalStream,) )
+    dataCollector = threading.Thread( target = readSerial, args=(globalStream,) )
     dataCollector.start()
 
     plt.legend()
