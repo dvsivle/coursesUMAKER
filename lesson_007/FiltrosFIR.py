@@ -156,7 +156,9 @@ def butter_bandpass_filter(data, lowcut, highcut, fs, order=5):
 
 def butter_lowpass_filter(data,cutoff,fs, order=5):
     b, a = butter_lowpass(cutoff,fs,order=order)
+    
     y = lfilter(b, a, data)
+    
     return y
 
 def butter_highpass_filter(data,cutoff,fs, order=5):
@@ -231,14 +233,14 @@ def plotData(num,charst,lines,data):
 
 
     # plot time domain
-    plotAmplitudeDomain(charst[0],lines[0],data)
-    plotAmplitudeDomain(charst[0],lines[1],lowPass)
-    plotAmplitudeDomain(charst[0],lines[2],highPass)
+    plotAmplitudeDomain( charst[0],lines[0],data )
+    plotAmplitudeDomain(charst[0],lines[1], lowPass )
+    plotAmplitudeDomain(charst[0],lines[2], highPass )
 
     # plot frecuency    
-    plotFrecuecyDomain(charst[1],lines[3],data)
-    plotFrecuecyDomain(charst[1],lines[4],lowPass)
-    plotFrecuecyDomain(charst[1],lines[5],highPass)
+    plotFrecuecyDomain( charst[1],lines[3], data)
+    plotFrecuecyDomain(charst[1],lines[4], lowPass )
+    plotFrecuecyDomain(charst[1],lines[5], highPass )
 
     return charst,lines
 

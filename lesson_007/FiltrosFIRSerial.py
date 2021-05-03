@@ -193,6 +193,7 @@ def plotFrecuecyDomain(chart,line,data):
     X = fftshift( fourier.fft(data,NFFT) ) #compute DFT using FFT  
     
     #fVals = np.arange(start = -NFFT/2,stop = NFFT/2)/NFFT #DFT Sample points        
+    
     fVals=np.arange(start = -NFFT/2,stop = NFFT/2)*Fs/NFFT
 
     # Get the limit to axis
@@ -205,6 +206,7 @@ def plotFrecuecyDomain(chart,line,data):
     # Set the limit to axis
     chart.set_ylim( 0,limitAxisY )
     chart.set_xlim( -1*limitAxisX,limitAxisX )
+    
     #chart.set_xlim( -5,5 )
     
     # Prepare data to X
