@@ -6,7 +6,12 @@ digital signals, images and AI.
 
 In the system GNU/Linux need install
 
-
+## Install OpenCV
+``` 
+pip install opencv-python
+                ó
+python3 -m pip install opencv-python
+``` 
 ## Recording Audio with PyAudio
 
 ``` 
@@ -25,8 +30,7 @@ pip install scipy
 
 ``` 
 # Examples:
-- **Butterworth low-pass**
-- **Butterworth high-pass**
+- **CascadeClassifier with OpenCV**
 
 <center>
 <img src="images/main.png" alt="Example" style="width:350px;height:250px;">
@@ -35,14 +39,6 @@ pip install scipy
 ## Run with:
 
 ```
-python3 FiltrosFIR.py
+python3 lesson_013/rostros/rostros.py
 
 ``` 
-### Note
-
-play the **canario-sonido.mp3**
-
-
-# Actions to be taken
-
-~~Pendiente sacar el filtro de butherword a la señal (probar crear el filtro a 900Hz)~~
