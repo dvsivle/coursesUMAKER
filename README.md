@@ -29,7 +29,7 @@ pip install scipy
 - **Butterworth high-pass**
 
 <center>
-<img src="images/example_.png" alt="Example" style="width:400px;height:250px;">
+<img src="images/main.png" alt="Example" style="width:350px;height:250px;">
 </center>
 
 ## Run with:
